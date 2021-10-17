@@ -50,11 +50,17 @@ def main():
         input('Choose a full hour:', type=NUMBER, name='hour', validate=validate_hour),
 
     ])
-    #datee = datetime.datetime.strptime(info['date'], "%Y-%m-%d")
+    datee = datetime.datetime.strptime(info['date'], "%Y-%m-%d")
 
-    # hotspots, clusters = tcp.predict_for_weekday_hour(2016, datee.month, datee.day, info['hour'])
-
-    hotspots = pd.read_csv('data/hotspots_with_profits.csv')
+    # hotspots1, clusters1 = tcp.predict_for_weekday_hour(2016, datee.month, datee.day,
+    #                                                     info['hour'])  # TODO Will not be used in presentation
+    if datee.month == 10:
+        hotspots = pd.read_csv('model.csv')
+    elif datee.month == 3:
+        hotspots = pd.read_csv('model1.csv')
+    else:
+        hotspots, clusters = tcp.predict_for_weekday_hour(2016, datee.month, datee.day,
+                                                          info['hour'])
 
     fig = px.scatter_mapbox(hotspots, lat="startLatitude", lon="startLongitude", hover_data=['profit'],
                             color_discrete_sequence=["orange"], zoom=11, height=800, color="profit",
@@ -67,6 +73,8 @@ def main():
     put_html(html).send()
     op = {}
     op['New Request'] = 'window.location.reload()'
+
+    put_html("<br></br")
     put_buttons(op.keys(), onclick=tab_operation)
     hold()
 
